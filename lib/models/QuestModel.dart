@@ -3,28 +3,28 @@ import 'package:flutter/material.dart';
 
 enum QuestStatus { available, done, processing, none}
 
-class SketchyQuestModel {
+class QuestModel {
   late String id;
   late String title;
   late String image;
   late String description;
   late QuestStatus status;
 /*
-  SketchyQuest(DocumentSnapshot snapshot) {
+  QuestModel(DocumentSnapshot snapshot) {
     id = snapshot.id;
     title = snapshot.title;
     image = snapshot.image;
     status = getStatus(snapshot.status);
   }
 *//*
-  SketchyQuest.initialize() {
+  QuestModel.initialize() {
     id = "";
     title = "";
     image = "";
     status = QuestStatus.available;
   }
 */
-  SketchyQuestModel.initialize(String _id, String _title, String _image, String _description, QuestStatus _status) {
+  QuestModel.initialize(String _id, String _title, String _image, String _description, QuestStatus _status) {
     id = _id;
     title = _title;
     image = _image;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/components/QuestListItem.dart';
-import 'package:ydays_trackgame/models/SketchyQuestModel.dart';
+import 'package:ydays_trackgame/models/QuestModel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -12,11 +12,11 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
-  // TODO: List<SketchyQuest> = appel BDD
-  final List<SketchyQuestModel> entries = <SketchyQuestModel>[
-    SketchyQuestModel.initialize("0", "La chasse sauvage", "A", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.done),
-    SketchyQuestModel.initialize("1", "Le retour du roi", "B", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.processing),
-    SketchyQuestModel.initialize("2", "Un voyage inattendu", "C", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.available),
+  // TODO: List<Quest> = appel BDD
+  final List<QuestModel> entries = <QuestModel>[
+    QuestModel.initialize("0", "La chasse sauvage", "A", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.done),
+    QuestModel.initialize("1", "Le retour du roi", "B", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.processing),
+    QuestModel.initialize("2", "Un voyage inattendu", "C", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.available),
   ];
 
   @override
@@ -25,7 +25,7 @@ class HomePageState extends State<HomePage> {
       appBar: AppBar(
         title: const Text('Jeu de piste à Paris'),
       ),
-      // TODO: adapter au model SketchyQuest
+      // TODO: adapter au model Quest
       body: ListView.separated(
               padding: const EdgeInsets.all(5),
               itemCount: entries.length,
