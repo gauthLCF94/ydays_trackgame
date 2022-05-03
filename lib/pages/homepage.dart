@@ -13,6 +13,8 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageState extends State<HomePage> {
+  final String title = "Home";
+
   // TODO: List<Quest> = appel BDD
   final List<QuestModel> entries = <QuestModel>[
     QuestModel.initialize("0", "La chasse sauvage", "A", "Ceci est une description. Lorem Ipsum tu connais", QuestStatus.done),
@@ -23,8 +25,7 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // TODO: custom AppBar
-      appBar: CustomAppBar('Jeu de piste à Paris'),
+      appBar: CustomAppBar(title),
       // TODO: adapter au model Quest
       body: ListView.separated(
               padding: const EdgeInsets.all(5),

@@ -13,6 +13,8 @@ class RiddlePage extends StatefulWidget {
 }
 
 class RiddlePageState extends State<RiddlePage> {
+  final String title = "Enigmes";
+
   final RiddleModel data = RiddleModel.initialize();
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _riddlePageController = TextEditingController();
@@ -47,7 +49,7 @@ class RiddlePageState extends State<RiddlePage> {
     screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
-      appBar: CustomAppBar('Jeu de piste à Paris'),
+      appBar: CustomAppBar(title),
       body: Container(
         padding: const EdgeInsets.all(10),
         child: Column(

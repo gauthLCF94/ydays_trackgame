@@ -25,7 +25,7 @@ class QuestListItem extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile (
-                leading: Image.asset(data.image, width: 10),
+                leading: Image.asset("logo_placeholder.png", width: 10),
                 title: Text(data.title),
                 onTap: () {
                   log("Tile taped. ID :" + data.id);

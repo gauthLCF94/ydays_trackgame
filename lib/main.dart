@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/pages/homepage.dart';
-import 'package:ydays_trackgame/pages/loginpage.dart';
+//import 'package:ydays_trackgame/pages/loginpage.dart';
+//import 'package:ydays_trackgame/pages/registerpage.dart';
 // import 'package:ydays_trackgame/pages/riddlepage.dart';
 
 void main() {
@@ -18,7 +19,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const LoginPage(),
+      home: const HomePage(),
     );
   }
 }
