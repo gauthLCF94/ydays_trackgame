@@ -15,7 +15,7 @@ class QuestListItem extends StatelessWidget {
     return Stack(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.only(top: 20, left: 20),
           height: 100,
           margin: const EdgeInsets.only(top: 12),
           decoration: BoxDecoration(
@@ -25,7 +25,8 @@ class QuestListItem extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile (
-                leading: Image.asset("logo_placeholder.png", width: 10),
+                //TODO: Lier les données reçues
+                leading: Image.asset("assets/img/logo_placeholder.png", width: 50, height: 50),
                 title: Text(data.title),
                 onTap: () {
                   log("Tile taped. ID :" + data.id);

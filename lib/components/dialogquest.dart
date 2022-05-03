@@ -24,9 +24,15 @@ class DialogQuest extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset(data.image, width: 20),
+                    Image.asset("assets/img/logo_placeholder.png", width: 50, height: 50),
                     const SizedBox(height: 15),
-                    Text(data.title),
+                    Text(
+                      data.title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold
+                      ),
+                    ),
                     const SizedBox(height: 15),
                     Text(data.description),
                     const SizedBox(height: 15),
