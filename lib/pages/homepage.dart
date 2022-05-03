@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:ydays_trackgame/components/QuestListItem.dart';
-import 'package:ydays_trackgame/models/QuestModel.dart';
+import 'package:ydays_trackgame/components/customappbar.dart';
+import 'package:ydays_trackgame/components/questlistitem.dart';
+import 'package:ydays_trackgame/models/questmodel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -22,9 +23,8 @@ class HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Jeu de piste à Paris'),
-      ),
+      // TODO: custom AppBar
+      appBar: CustomAppBar('Jeu de piste à Paris'),
       // TODO: adapter au model Quest
       body: ListView.separated(
               padding: const EdgeInsets.all(5),
