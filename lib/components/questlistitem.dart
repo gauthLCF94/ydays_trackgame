@@ -47,9 +47,22 @@ class QuestListItem extends StatelessWidget {
               color: Colors.lightBlue,
               borderRadius: BorderRadius.circular(15)
           ),
-          child: Text("Processing" /* data.status.toString() */),
+          child: GetStatus(data.status),
         ),
       ],
     );
+  }
+
+  Widget GetStatus(QuestStatus _status) {
+    switch (_status) {
+      case QuestStatus.done:
+        return const Text("Accomplie");
+      case QuestStatus.processing:
+        return const Text("En cours");
+      case QuestStatus.available:
+        return const Text("Disponible");
+      default:
+        return const Text("Indisponible");
+    }
   }
 }

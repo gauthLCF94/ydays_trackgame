@@ -61,7 +61,7 @@ class RiddlePageState extends State<RiddlePage> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: <Widget>[
-                      GetImage(data.imgContent),
+                      GetImage(""),
                       const SizedBox(height: 20),
                       Text(
                         data.textContent,
@@ -106,7 +106,7 @@ class RiddlePageState extends State<RiddlePage> {
       return Image.network(imgUrl, width: screenWidth, height: screenHeight/4);
     }
     else {
-      return const SizedBox(height: 0);
+      return Image.asset("assets/img/logo_placeholder.png", width: 200, height: 200);
     }
   }
 
