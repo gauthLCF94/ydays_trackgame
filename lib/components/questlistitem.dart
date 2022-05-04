@@ -8,7 +8,7 @@ import 'package:ydays_trackgame/components/dialogquest.dart';
 
 class QuestListItem extends StatelessWidget {
   final QuestModel data;
-  QuestListItem(this.data);
+  const QuestListItem(this.data);
 
   @override
   Widget build(BuildContext context) {
@@ -25,9 +25,16 @@ class QuestListItem extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile (
-                //TODO: Lier les données reçues
-                leading: Image.asset("assets/img/logo_placeholder.png", width: 50, height: 50),
+                leading: Image.network(data.image, width: 50, height: 50),
                 title: Text(data.title),
+                subtitle: Row(
+                  children: [
+                    const SizedBox(width: 10),
+                    const Icon(Icons.where_to_vote_rounded, color: Colors.blueGrey, size: 22),
+                    const SizedBox(width: 3),
+                    Text(data.location),
+                  ]
+                ),
                 onTap: () {
                   log("Tile taped. ID :" + data.id);
                   showDialog(
@@ -40,29 +47,48 @@ class QuestListItem extends StatelessWidget {
           )
         ),
         Container(
-          height: 20, width: 100,
+          height: 30, width: 150,
           margin: const EdgeInsets.only(left:16),
           alignment: Alignment.center,
           decoration: BoxDecoration(
               color: Colors.lightBlue,
               borderRadius: BorderRadius.circular(15)
           ),
-          child: GetStatus(data.status),
+          child: GetStatus(data.status)
         ),
       ],
     );
   }
 
-  Widget GetStatus(QuestStatus _status) {
+  Row GetStatus(int _status) {
+    Icon icon;
+    Text text;
+    
     switch (_status) {
-      case QuestStatus.done:
-        return const Text("Accomplie");
-      case QuestStatus.processing:
-        return const Text("En cours");
-      case QuestStatus.available:
-        return const Text("Disponible");
+      case 2:
+        icon = const Icon(Icons.done);
+        text = const Text("Accomplie");
+        break;
+      case 1:
+        icon = const Icon(Icons.access_alarms_rounded);
+        text = const Text("En cours");
+        break;
+      case 0:
+        icon = const Icon(Icons.assignment_rounded);
+        text = const Text("Disponible");
+        break;
       default:
-        return const Text("Indisponible");
+        icon = const Icon(Icons.alarm_off_rounded);
+        text =  const Text("Indisponible");
+        break;
     }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        icon,
+        const SizedBox(width: 10.0),
+        text
+      ]
+    );
   }
 }

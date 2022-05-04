@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/components/customappbar.dart';
 
 class LoginPage extends StatefulWidget {
+  static const route = '/login';
   const LoginPage({Key? key}) : super(key: key);
 
   @override

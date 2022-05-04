@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/components/customappbar.dart';
 
 class RegisterPage extends StatefulWidget {
+  static const route = '/register';
   const RegisterPage({Key? key}) : super(key: key);
 
   @override

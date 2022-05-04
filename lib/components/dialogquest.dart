@@ -1,9 +1,11 @@
 // ignore_for_file: file_names
 
 import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/models/questmodel.dart';
+import 'package:ydays_trackgame/models/riddlemodel.dart';
+import 'package:ydays_trackgame/pages/riddlepage.dart';
+import 'package:ydays_trackgame/services/httpservice.dart';
 
 class DialogQuest extends StatelessWidget {
   final QuestModel data;
@@ -24,7 +26,7 @@ class DialogQuest extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Image.asset("assets/img/logo_placeholder.png", width: 50, height: 50),
+                    Image.network(data.image, width: 50, height: 50),
                     const SizedBox(height: 15),
                     Text(
                       data.title,
@@ -32,6 +34,15 @@ class DialogQuest extends StatelessWidget {
                         fontSize: 16,
                         fontWeight: FontWeight.bold
                       ),
+                    ),
+                    const SizedBox(height: 5,),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.where_to_vote_rounded, color: Colors.blueGrey, size: 22),
+                          const SizedBox(width: 3),
+                          Text(data.location),
+                        ]
                     ),
                     const SizedBox(height: 15),
                     Text(data.description),
@@ -41,8 +52,16 @@ class DialogQuest extends StatelessWidget {
                       children: [
                         TextButton(
                             onPressed: () {
-                              log("Redirection vers les enigmes de la quête n" +
-                                  data.id.toString());
+                              log("Redirection vers les enigmes de la quête n" + data.id);
+                              /****************************************************************/
+                              //TODO: call api pour la première enigme de la quête selectionnee
+                              Future<RiddleModel> _riddle = HttpService.getRiddle(data.id, 0);
+                              /*****************************************************************/
+                              Navigator.pushNamed(
+                                context,
+                                RiddlePage.route,
+                                arguments: _riddle
+                              );
                             },
                             child: const Text("Commencer la quête")
                         )
