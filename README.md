@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # ydays_trackgame
 
 A new Flutter project.
@@ -17,4 +16,3 @@ For help getting started with Flutter, view our
 samples, guidance on mobile development, and a full API reference.
 =======
 # ydays_trackgame
->>>>>>> 3fa7f0e913577fd2d53ae3f5169e943c3b46c54c
