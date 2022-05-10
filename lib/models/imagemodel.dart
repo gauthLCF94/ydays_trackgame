@@ -1,12 +1,12 @@
 class ImageModel {
   int id;
-  int riddleId;
+  int id_enigma;
   String url;
   int order;
 
   ImageModel({
     required this.id,
-    required this.riddleId,
+    required this.id_enigma,
     required this.url,
     required this.order,
   });
@@ -14,7 +14,7 @@ class ImageModel {
   factory ImageModel.fromJson(Map<String, dynamic> json) {
     return ImageModel(
         id: json["id"],
-        riddleId: json["id_enigma"],
+        id_enigma: json["id_enigma"],
         url: json["url"],
         order: json["order"],
     );

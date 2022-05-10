@@ -20,9 +20,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            // primary:Colors.lightBlue,
+            primary:Colors.indigo,
           )
-        )
+        ),
+        primaryColor: Colors.amber,
+
       ),
       home: const HomePage(),
       routes: {

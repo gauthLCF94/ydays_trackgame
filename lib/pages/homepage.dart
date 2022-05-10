@@ -21,6 +21,8 @@ class HomePageState extends State<HomePage> {
   final String title = "Home";
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
+  final HttpService httpService = HttpService();
+
   late Future<List<QuestModel>> quests;
   late Future<List<RiddleModel>> riddles;
 
@@ -28,8 +30,8 @@ class HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     setState(() {
-      quests = HttpService.getQuests();
-      riddles = HttpService.getRiddles();
+      quests = httpService.getQuests();
+      riddles = httpService.getRiddles();
     });
   }
 
@@ -82,15 +84,15 @@ class HomePageState extends State<HomePage> {
 
   Future<void> _refresh() async {
     setState(() {
-      quests = HttpService.getQuests();
-      riddles = HttpService.getRiddles();
+      quests = httpService.getQuests();
+      riddles = httpService.getRiddles();
     });
   }
 
   static int getIDFirstRiddle(List<RiddleModel> _allRiddles, int _questId) {
     List<int> riddleIds = List.empty(growable: true);
     for (var element in _allRiddles) {
-      if (element.questId == _questId) {
+      if (element.id_quest == _questId) {
         riddleIds.add(element.id);
       }
     }

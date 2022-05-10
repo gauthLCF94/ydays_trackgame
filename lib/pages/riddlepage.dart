@@ -3,10 +3,13 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/components/customappbar.dart';
-import 'package:ydays_trackgame/components/mycustomerror.dart';
 import 'package:ydays_trackgame/models/imagemodel.dart';
 import 'package:ydays_trackgame/models/riddlemodel.dart';
 import 'package:ydays_trackgame/services/httpservice.dart';
+import 'dart:convert' show utf8;
+
+var encoded = utf8.encode('Lorem ipsum dolor sit amet, consetetur...');
+var decoded = utf8.decode(encoded);
 
 class RiddlePage extends StatefulWidget {
   static const route = '/riddle';
@@ -26,14 +29,25 @@ class RiddlePageState extends State<RiddlePage> {
   final TextEditingController _riddlePageController = TextEditingController();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
+  final HttpService httpService = HttpService();
+
   late double screenWidth;
   late double screenHeight;
 
-  late Future<RiddleModel> riddle;
+  late int _riddleId;
+  late RiddleModel _riddle;
+  late ImageModel _image;
+  late String _content;
+
+  int get riddleId => _riddleId;
+  RiddleModel get riddle => _riddle;
+  ImageModel get image => _image;
+  String get content => _content;
 
   @override
   void initState() {
     super.initState();
+    getEnigma();
   }
 
   @override
@@ -43,66 +57,41 @@ class RiddlePageState extends State<RiddlePage> {
     final args = ModalRoute.of(context)!.settings.arguments as int;
     log("args: " + args.toString());
     setState(() {
-      riddle = HttpService.getRiddleById(args);
+      _riddleId = args;
     });
-    return FutureBuilder(
-      future: riddle,
-      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
-        if (snapshot.hasData) {
-          log("in hasdata");
-          final RiddleModel riddle = snapshot.data;
-          return Scaffold(
-            appBar: CustomAppBar(title),
-            body: Container(
-              padding: const EdgeInsets.all(10),
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: Container(
-                        padding: const EdgeInsets.all(25.0),
-                        child: SingleChildScrollView(
-                          child: Column(
-                              children: <Widget>[
-                                GetImage(riddle.id),
-                                const SizedBox(height: 20),
-                                Text(
-                                    riddle.textContent,
-                                    textAlign: TextAlign.justify,
-                                    style: const TextStyle(
-                                      color: Colors.black,
-                                    )
-                                ),
-                              ]
-                          ),
+    getEnigma();
+    return Scaffold(
+      appBar: CustomAppBar(title),
+      body: Container(
+        padding: const EdgeInsets.all(10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Expanded(
+              child: Container(
+                padding: const EdgeInsets.all(25.0),
+                child: SingleChildScrollView(
+                  child: Column(
+                      children: <Widget>[
+                        Image.network(image.url),
+                        const SizedBox(height: 20),
+                        Text(
+                            content,
+                            textAlign: TextAlign.justify,
+                            style: const TextStyle(
+                              color: Colors.black,
+                            )
                         ),
-                      ),
-                    ),
-                    BottomScreenWidget(context, riddle),
-                  ]
+                      ]
+                  ),
+                ),
               ),
             ),
-          );
-        }
-        else if (snapshot.hasError) {
-          log("in error");
-          return MyCustomError(
-            errorMsg: '${snapshot.error}',
-            refreshIndicatorKey: _refreshIndicatorKey,
-          );
-        }
-        else {
-          log("in else");
-          return const Center(child: CircularProgressIndicator());
-        }
-        // throw Exception('${snapshot.error} / ${snapshot.connectionState}');
-      }
+            BottomScreenWidget(context, riddle),
+          ]
+       ),
+      )
     );
-  }
-
-  Image GetImage(int _riddleId) {
-    ImageModel img = HttpService.getImageByRiddleID(_riddleId) as ImageModel;
-    return Image.network(img.url);
   }
 
   Widget BottomScreenWidget(BuildContext _context, RiddleModel _riddle) {
@@ -129,7 +118,7 @@ class RiddlePageState extends State<RiddlePage> {
                   Navigator.pushNamed(
                     _context,
                     RiddlePage.route,
-                    arguments: _riddle.nextId,
+                    arguments: _riddle.id_next,
                   );
                 }
                 else {
@@ -145,7 +134,7 @@ class RiddlePageState extends State<RiddlePage> {
         Navigator.pushNamed(
             _context,
             RiddlePage.route,
-            arguments: _riddle.nextId,
+            arguments: _riddle.id_next,
         );
       },
       child: const Text("Suivant"),
@@ -157,10 +146,32 @@ class RiddlePageState extends State<RiddlePage> {
   }
 
   bool CheckUserAnswer(String _response, String _userInput) {
-    //TODO: compléxifier la vérification (suppression des espaces, des accents par exemple)
-    if (_response == _userInput.toLowerCase()) {
+    //TODO: compléxifier la vérification (suppression des accents par exemple)
+    _response = _response.toLowerCase()
+        .replaceAll(' ', '');
+    _userInput = _userInput.toLowerCase()
+        .replaceAll(' ', '') // espaces
+        .replaceAll(RegExp('<(\S*?)[^>]*>.*?|<.*? />'), '') // HTML Tags
+        .replaceAll(RegExp('((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))'), ''); // IP adresses
+
+    if (_response == _userInput) {
       return true;
     }
     return false;
+  }
+
+  Future<void> getEnigma() async {
+    if (!_riddleId.isNaN) {
+      RiddleModel r = await httpService.getRiddleById(_riddleId);
+      ImageModel i = await httpService.getImageByRiddleID(_riddleId);
+      var encoded = utf8.encode(r.content);
+      var decoded = utf8.decode(encoded);
+
+      setState(() {
+        _riddle = r;
+        _image = i;
+        _content = decoded;
+      });
+    }
   }
 }

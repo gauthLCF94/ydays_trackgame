@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
+import 'dart:typed_data';
 import 'package:ydays_trackgame/models/imagemodel.dart';
 import 'package:ydays_trackgame/models/questmodel.dart';
 import 'package:http/http.dart' as http;
@@ -9,10 +9,28 @@ import 'package:ydays_trackgame/models/riddlemodel.dart';
 
 class HttpService {
   static const String apiUrl = "https://mimapi.herokuapp.com";
-  //TODO: get API key
-  static late String apiKey = "b8ddd4ea-28e5-4fea-a320-26eebfd75d86" /*http.get(Uri.parse("https://getapikey.com")) as String*/;
+  static const String apiKeyUrl = "https://monapikey.com";
 
-  static Future<List<QuestModel>> getQuests() async {
+  //TODO: get API key
+  late String apiKey;
+
+  HttpService() {
+    getApiKey();
+  }
+
+  Future<void> getApiKey() async {
+    String keyValue = "";
+    await http.get(Uri.parse(apiKeyUrl)).then((res) => {
+      if (res.statusCode == 200) {
+        // TODO: get request body
+        // keyValue = ... ;
+      }
+    });
+
+    apiKey = keyValue;
+  }
+
+  Future<List<QuestModel>> getQuests() async {
     String uri = apiUrl + "/quests";
     final res = await http.get(
         Uri.parse(uri),
@@ -33,7 +51,7 @@ class HttpService {
     }
   }
 
-  static Future<QuestModel> getQuestById(int questId) async {
+  Future<QuestModel> getQuestById(int questId) async {
     String uri = apiUrl + "/quests/" + questId.toString();
     final res = await http.get(
         Uri.parse(uri),
@@ -53,7 +71,7 @@ class HttpService {
     }
   }
 
-  static Future<List<RiddleModel>> getRiddles() async {
+  Future<List<RiddleModel>> getRiddles() async {
     String uri = apiUrl + "/enigmas";
     final res = await http.get(
         Uri.parse(uri),
@@ -74,7 +92,7 @@ class HttpService {
     }
   }
 
-  static Future<RiddleModel> getRiddleById(int _riddleId) async {
+  Future<RiddleModel> getRiddleById(int _riddleId) async {
     String uri = apiUrl + "/enigmas/" + _riddleId.toString();
     final res = await http.get(
         Uri.parse(uri),
@@ -82,14 +100,8 @@ class HttpService {
     );
 
     if (res.statusCode == 200) {
-      log("status code: 200");
-      dynamic body = jsonDecode(res.body);
-      log(body.toString());
-      RiddleModel riddle = jsonDecode(res.body).map(
-        (Map<String,dynamic> item) => RiddleModel.fromJson(item)
-      );
       log("Riddle " + _riddleId.toString() + " loaded !");
-      return riddle;
+      return RiddleModel.fromJson(jsonDecode(res.body));
     }
     else {
       log("Failed to load riddle with id: " + _riddleId.toString());
@@ -97,7 +109,7 @@ class HttpService {
     }
   }
 
-  static Future<ImageModel> getImageByRiddleID(int _riddleId) async {
+  Future<ImageModel> getImageByRiddleID(int _riddleId) async {
     String uri = apiUrl + "/pictures/enigma/" + _riddleId.toString();
     final res = await http.get(
         Uri.parse(uri),
@@ -105,11 +117,8 @@ class HttpService {
     );
 
     if (res.statusCode == 200) {
-      ImageModel img = jsonDecode(res.body).map(
-          (dynamic item) => ImageModel.fromJson(item)
-      );
       log("Image loaded for riddle " + _riddleId.toString());
-      return img;
+      return ImageModel.fromJson(jsonDecode(res.body));
     }
     else {
       log("Failed to load image ...");
