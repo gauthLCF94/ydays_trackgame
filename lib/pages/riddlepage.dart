@@ -3,15 +3,17 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/components/customappbar.dart';
+import 'package:ydays_trackgame/components/mycustomerror.dart';
+import 'package:ydays_trackgame/models/imagemodel.dart';
 import 'package:ydays_trackgame/models/riddlemodel.dart';
 import 'package:ydays_trackgame/services/httpservice.dart';
 
 class RiddlePage extends StatefulWidget {
   static const route = '/riddle';
 
-  const RiddlePage({
+  RiddlePage({
     Key? key,
-  }) : super(key:key);
+  }) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => RiddlePageState();
@@ -19,91 +21,92 @@ class RiddlePage extends StatefulWidget {
 
 class RiddlePageState extends State<RiddlePage> {
   final String title = "Enigmes";
-  static bool pop = false;
 
   final FocusNode _focusNode = FocusNode();
   final TextEditingController _riddlePageController = TextEditingController();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
   late double screenWidth;
   late double screenHeight;
 
+  late Future<RiddleModel> riddle;
+
   @override
   void initState() {
     super.initState();
-    _focusNode.addListener(_focusNodeListener);
-  }
-
-  @override
-  void dispose() {
-    _riddlePageController.dispose();
-    _focusNode.removeListener(_focusNodeListener);
-    super.dispose();
-  }
-
-  Future<void> _focusNodeListener() async {
-    if (_focusNode.hasFocus) {
-      log('TextLabel has focus');
-    } else {
-      log('TextLabel lost focus');
-    }
   }
 
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
     screenHeight = MediaQuery.of(context).size.height;
-    final riddle = ModalRoute.of(context)!.settings.arguments as RiddleModel;
-
-    return WillPopScope(
-      onWillPop: () async {
-        return pop;
-      },
-      child: Scaffold(
-        appBar: CustomAppBar(title),
-        body: Container(
-          padding: const EdgeInsets.all(10),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Expanded(
-                child: Container(
-                  padding: const EdgeInsets.all(25.0),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: <Widget>[
-                        GetImage(riddle.imgContent),
-                        const SizedBox(height: 20),
-                        Text(
-                          riddle.textContent,
-                          textAlign: TextAlign.justify,
-                          style: const TextStyle(
-                            color: Colors.black,
-                          )
+    final args = ModalRoute.of(context)!.settings.arguments as int;
+    log("args: " + args.toString());
+    setState(() {
+      riddle = HttpService.getRiddleById(args);
+    });
+    return FutureBuilder(
+      future: riddle,
+      builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+        if (snapshot.hasData) {
+          log("in hasdata");
+          final RiddleModel riddle = snapshot.data;
+          return Scaffold(
+            appBar: CustomAppBar(title),
+            body: Container(
+              padding: const EdgeInsets.all(10),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.all(25.0),
+                        child: SingleChildScrollView(
+                          child: Column(
+                              children: <Widget>[
+                                GetImage(riddle.id),
+                                const SizedBox(height: 20),
+                                Text(
+                                    riddle.textContent,
+                                    textAlign: TextAlign.justify,
+                                    style: const TextStyle(
+                                      color: Colors.black,
+                                    )
+                                ),
+                              ]
+                          ),
                         ),
-                      ]
+                      ),
                     ),
-                  ),
-                ),
+                    BottomScreenWidget(context, riddle),
+                  ]
               ),
-              BottomScreenWidget(riddle),
-            ]
-          ),
-        ),
-      )
+            ),
+          );
+        }
+        else if (snapshot.hasError) {
+          log("in error");
+          return MyCustomError(
+            errorMsg: '${snapshot.error}',
+            refreshIndicatorKey: _refreshIndicatorKey,
+          );
+        }
+        else {
+          log("in else");
+          return const Center(child: CircularProgressIndicator());
+        }
+        // throw Exception('${snapshot.error} / ${snapshot.connectionState}');
+      }
     );
   }
 
-  Widget GetImage(String imgUrl) {
-    if (imgUrl != "") {
-      return Image.network(imgUrl, width: screenWidth, height: screenHeight/4);
-    }
-    else {
-      return Image.asset("assets/img/logo_placeholder.png", width: 200, height: 200);
-    }
+  Image GetImage(int _riddleId) {
+    ImageModel img = HttpService.getImageByRiddleID(_riddleId) as ImageModel;
+    return Image.network(img.url);
   }
 
-  Widget BottomScreenWidget(RiddleModel _riddle) {
-    if (_riddle.response != "") {
+  Widget BottomScreenWidget(BuildContext _context, RiddleModel _riddle) {
+    if (_riddle.response != "null") {
       return TextField(
         controller: _riddlePageController,
         focusNode: _focusNode,
@@ -121,11 +124,13 @@ class RiddlePageState extends State<RiddlePage> {
               onPressed: () {
                 log('Sending : ' + _riddlePageController.text);
                 log('Check response');
-                if (CheckUserAnswer(_riddle, _riddlePageController.text)) {
+                if (CheckUserAnswer(_riddle.response, _riddlePageController.text)) {
                   log('Good answer !');
-                  //TODO: call API of next riddle
-                  //TODO: redirect to new RiddlePage with the new data
-                  NextRiddle(_riddle);
+                  Navigator.pushNamed(
+                    _context,
+                    RiddlePage.route,
+                    arguments: _riddle.nextId,
+                  );
                 }
                 else {
                   //TODO: create error animation
@@ -137,10 +142,11 @@ class RiddlePageState extends State<RiddlePage> {
     }
     return ElevatedButton(
       onPressed: () {
-        //TODO: Go to next riddle
-        //TODO: Possibilité de revenir
-        pop = true;
-        NextRiddle(_riddle);
+        Navigator.pushNamed(
+            _context,
+            RiddlePage.route,
+            arguments: _riddle.nextId,
+        );
       },
       child: const Text("Suivant"),
       style: ElevatedButton.styleFrom(
@@ -150,23 +156,11 @@ class RiddlePageState extends State<RiddlePage> {
     );
   }
 
-  bool CheckUserAnswer(RiddleModel _riddle, String _userInput) {
+  bool CheckUserAnswer(String _response, String _userInput) {
     //TODO: compléxifier la vérification (suppression des espaces, des accents par exemple)
-    if (_riddle.response == _userInput.toLowerCase()) {
+    if (_response == _userInput.toLowerCase()) {
       return true;
     }
     return false;
   }
-
-  void NextRiddle(RiddleModel _currentRiddle) {
-    //TODO: call API to load data of next riddle
-    //TODO: redirect to new RiddlePage with the new data
-    Future<RiddleModel> nextRiddle = HttpService.getRiddle(_currentRiddle.questId, _currentRiddle.id +1);
-    Navigator.pushNamed(
-        context,
-        RiddlePage.route,
-        arguments: nextRiddle
-    );
-  }
-
 }

@@ -20,7 +20,7 @@ class CustomAppBar extends StatelessWidget with PreferredSizeWidget {
           padding: const EdgeInsets.only(right:20.0),
           child: GestureDetector(
             onTap: () {
-              //TODO: redirect to account page (if any)
+              //TODO: redirect to account page
               print('redirection to account page');
             },
             child: const Icon(Icons.account_circle_rounded, size: 30,),

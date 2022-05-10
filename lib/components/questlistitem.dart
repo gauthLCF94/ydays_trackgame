@@ -1,14 +1,18 @@
 // ignore_for_file: file_names
 
+import 'dart:async';
 import 'dart:developer';
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:ydays_trackgame/models/questmodel.dart';
 import 'package:ydays_trackgame/components/dialogquest.dart';
+import 'package:ydays_trackgame/models/riddlemodel.dart';
+import 'package:ydays_trackgame/services/httpservice.dart';
 
 class QuestListItem extends StatelessWidget {
-  final QuestModel data;
-  const QuestListItem(this.data);
+  final QuestModel quest;
+  final int firstID;
+  QuestListItem(this.quest, this.firstID, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +29,21 @@ class QuestListItem extends StatelessWidget {
           child: Column(
             children: <Widget>[
               ListTile (
-                leading: Image.network(data.image, width: 50, height: 50),
-                title: Text(data.title),
+                leading: Image.asset("assets/img/logo_placeholder.png", width: 50, height: 50),
+                title: Text(quest.title),
                 subtitle: Row(
-                  children: [
-                    const SizedBox(width: 10),
-                    const Icon(Icons.where_to_vote_rounded, color: Colors.blueGrey, size: 22),
-                    const SizedBox(width: 3),
-                    Text(data.location),
+                  children: const [
+                    SizedBox(width: 10),
+                    Icon(Icons.where_to_vote_rounded, color: Colors.blueGrey, size: 22),
+                    SizedBox(width: 3),
+                    Text("Paris, Sacré-Cœur"),
                   ]
                 ),
-                onTap: () {
-                  log("Tile taped. ID :" + data.id);
+                onTap: () async {
+                  log("Tile taped. ID :" + quest.id.toString());
                   showDialog(
                       context: context,
-                      builder: (context) => DialogQuest(data)
+                      builder: (context) => DialogQuest(quest, firstID)
                   );
                 },
               ),
@@ -54,8 +58,7 @@ class QuestListItem extends StatelessWidget {
               color: Colors.lightBlue,
               borderRadius: BorderRadius.circular(15)
           ),
-          child: GetStatus(data.status)
-        ),
+          child: GetStatus(0))
       ],
     );
   }

@@ -29,7 +29,7 @@ class MyApp extends StatelessWidget {
         HomePage.route : (BuildContext context) => const HomePage(),
         LoginPage.route : (BuildContext context) => const LoginPage(),
         RegisterPage.route : (BuildContext context) => const RegisterPage(),
-        RiddlePage.route : (BuildContext context) => const RiddlePage()
+        RiddlePage.route : (BuildContext context) => RiddlePage(),
       },
     );
   }
